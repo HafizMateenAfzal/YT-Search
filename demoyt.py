@@ -114,5 +114,14 @@ if st.button("Fetch Data"):
                 st.markdown(
                     f"**Title**: {result['Title']}\n"
                     f"**Description**: {result['Description']}\n"
-                    f"**Views**: {result['Views']}\n"
-                    f"**Subscribers**: {result['Subscri
+                     f"**Views**: {result['Views']}\n"
+                    f"**Subscribers**: {result['Subscribers']}\n"
+                    f"[Watch Video]({result['URL']})\n"
+                )
+        else:
+            st.warning("No results found based on your search criteria.")
+
+    except requests.exceptions.RequestException as e:
+        st.error(f"Request error: {e}")
+    except Exception as e:
+        st.error(f"An unexpected error occurred: {e}")
