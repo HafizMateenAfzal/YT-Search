@@ -8,8 +8,13 @@ YOUTUBE_SEARCH_URL = "https://www.googleapis.com/youtube/v3/search"
 YOUTUBE_VIDEO_URL = "https://www.googleapis.com/youtube/v3/videos"
 YOUTUBE_CHANNEL_URL = "https://www.googleapis.com/youtube/v3/channels"
 
+response = requests.get(YOUTUBE_SEARCH_URL, params=search_params)
+data = response.json()
+st.write(data)  # This will print the full response from YouTube
+
 # Streamlit App Title
 st.title("YouTube Topic Explorer Tool")
+
 
 # Input Fields
 keywords = st.text_input("Enter Keywords (comma-separated):", "sports, football, basketball")
