@@ -3,39 +3,34 @@ import requests
 from datetime import datetime, timedelta
 
 # YouTube API Key
-API_KEY = "AIzaSyBF_mH8qXyz4BSqx4kQivMv_YD6_Fq7-bQ"
+API_KEY = "AIzaSyBF_mH8qXyz4BSqx4kQivMv_YD6_Fq7-bQ"  # Replace this with your actual YouTube API key
 YOUTUBE_SEARCH_URL = "https://www.googleapis.com/youtube/v3/search"
 YOUTUBE_VIDEO_URL = "https://www.googleapis.com/youtube/v3/videos"
 YOUTUBE_CHANNEL_URL = "https://www.googleapis.com/youtube/v3/channels"
 
-response = requests.get(YOUTUBE_SEARCH_URL, params=search_params)
-data = response.json()
-st.write(data)  # This will print the full response from YouTube
-
 # Streamlit App Title
 st.title("YouTube Topic Explorer Tool")
 
-
-# Input Fields
+# Input Fields for Keywords, Location, and Days
 keywords = st.text_input("Enter Keywords (comma-separated):", "sports, football, basketball")
 location = st.text_input("Enter Location (country code, e.g., US for United States):", "US")
 days = st.number_input("Enter Days to Search (1-30):", min_value=1, max_value=30, value=7)
 
-# Fetch Data Button
+# Button to fetch data
 if st.button("Fetch Data"):
     try:
-        # Calculate date range
+        # Calculate the date range based on the number of days entered
         start_date = (datetime.utcnow() - timedelta(days=int(days))).isoformat("T") + "Z"
         all_results = []
 
-        # Prepare the list of keywords from input
+        # Prepare the list of keywords by splitting them by commas
         keyword_list = [keyword.strip() for keyword in keywords.split(",")]
 
         # Iterate over the list of keywords
         for keyword in keyword_list:
             st.write(f"Searching for keyword: {keyword}")
 
-            # Define search parameters
+            # Define search parameters for the YouTube API
             search_params = {
                 "part": "snippet",
                 "q": keyword,
@@ -47,7 +42,7 @@ if st.button("Fetch Data"):
                 "key": API_KEY,
             }
 
-            # Fetch video data
+            # Make the API request to fetch video data
             response = requests.get(YOUTUBE_SEARCH_URL, params=search_params)
             data = response.json()
 
@@ -80,7 +75,7 @@ if st.button("Fetch Data"):
             stats = stats_data["items"]
             channels = channel_data["items"]
 
-            # Collect results
+            # Collect the results (title, description, views, subscribers)
             for video, stat, channel in zip(videos, stats, channels):
                 title = video["snippet"].get("title", "N/A")
                 description = video["snippet"].get("description", "")[:200]
@@ -110,5 +105,8 @@ if st.button("Fetch Data"):
                 )
         else:
             st.warning("No results found based on your search criteria.")
+
+    except requests.exceptions.RequestException as e:
+        st.error(f"Request error: {e}")
     except Exception as e:
-        st.error(f"An error occurred: {e}")
+        st.error(f"An unexpected error occurred: {e}")
